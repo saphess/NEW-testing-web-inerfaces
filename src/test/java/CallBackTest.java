@@ -50,4 +50,54 @@ public class CallBackTest {
 
         assertEquals(expectText, actualText);
     }
+
+    @Test
+    void testValidationName() {
+        driver.get("http://localhost:9999");
+        WebElement form = driver.findElement(By.cssSelector("form"));
+        form.findElement(By.cssSelector("[name='name']")).sendKeys("Ivan Rudskoi");
+        form.findElement(By.cssSelector("[name='phone']")).sendKeys("+79501112332");
+        form.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+
+        form.findElement(By.cssSelector("button")).click();
+
+        String actualText = form.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub"))
+                .getText().strip();
+        String expectText = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+
+        assertEquals(expectText, actualText);
+    }
+
+    @Test
+    void testValidationPhone() {
+        driver.get("http://localhost:9999");
+        WebElement form = driver.findElement(By.cssSelector("form"));
+        form.findElement(By.cssSelector("[name='name']")).sendKeys("Иван Лазарь");
+        form.findElement(By.cssSelector("[name='phone']")).sendKeys("79501112332");
+        form.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+
+        form.findElement(By.cssSelector("button")).click();
+
+        String actualText = form.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub"))
+                .getText().strip();
+        String expectText = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
+
+        assertEquals(expectText, actualText);
+    }
+
+    @Test
+    void testValidationAgreement() {
+        driver.get("http://localhost:9999");
+        WebElement form = driver.findElement(By.cssSelector("form"));
+        form.findElement(By.cssSelector("[name='name']")).sendKeys("Иван Лазарь");
+        form.findElement(By.cssSelector("[name='phone']")).sendKeys("+79501112332");
+
+        form.findElement(By.cssSelector("button")).click();
+
+        boolean actualIsDisplayed = form.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid"))
+                .isDisplayed();
+        boolean expectIsDisplayed = true;
+
+        assertEquals(expectIsDisplayed, actualIsDisplayed);
+    }
 }
