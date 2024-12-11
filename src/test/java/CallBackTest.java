@@ -27,6 +27,7 @@ public class CallBackTest {
         options.addArguments("--headless");
 
         driver = new ChromeDriver(options);
+        driver.get("http://localhost:9999");
     }
 
     @AfterEach
@@ -37,7 +38,6 @@ public class CallBackTest {
 
     @Test
     void shouldSendForm() {
-        driver.get("http://localhost:9999");
         WebElement form = driver.findElement(By.cssSelector("form"));
         form.findElement(By.cssSelector("[name='name']")).sendKeys("Иван Лазарь");
         form.findElement(By.cssSelector("[name='phone']")).sendKeys("+79501112332");
@@ -53,7 +53,6 @@ public class CallBackTest {
 
     @Test
     void testValidationName() {
-        driver.get("http://localhost:9999");
         WebElement form = driver.findElement(By.cssSelector("form"));
         form.findElement(By.cssSelector("[name='name']")).sendKeys("Ivan Rudskoi");
         form.findElement(By.cssSelector("[name='phone']")).sendKeys("+79501112332");
@@ -70,7 +69,6 @@ public class CallBackTest {
 
     @Test
     void testValidationPhone() {
-        driver.get("http://localhost:9999");
         WebElement form = driver.findElement(By.cssSelector("form"));
         form.findElement(By.cssSelector("[name='name']")).sendKeys("Иван Лазарь");
         form.findElement(By.cssSelector("[name='phone']")).sendKeys("79501112332");
@@ -87,7 +85,6 @@ public class CallBackTest {
 
     @Test
     void testValidationAgreement() {
-        driver.get("http://localhost:9999");
         WebElement form = driver.findElement(By.cssSelector("form"));
         form.findElement(By.cssSelector("[name='name']")).sendKeys("Иван Лазарь");
         form.findElement(By.cssSelector("[name='phone']")).sendKeys("+79501112332");
@@ -99,5 +96,35 @@ public class CallBackTest {
         boolean expectIsDisplayed = true;
 
         assertEquals(expectIsDisplayed, actualIsDisplayed);
+    }
+
+    @Test
+    void testValidationNameNull() {
+        WebElement form = driver.findElement(By.cssSelector("form"));
+        form.findElement(By.cssSelector("[name='phone']")).sendKeys("+79501112332");
+        form.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+
+        form.findElement(By.cssSelector("button")).click();
+
+        String actualText = form.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub"))
+                .getText().strip();
+        String expectText = "Поле обязательно для заполнения";
+
+        assertEquals(expectText, actualText);
+    }
+
+    @Test
+    void testValidationPhoneNull() {
+        WebElement form = driver.findElement(By.cssSelector("form"));
+        form.findElement(By.cssSelector("[name='name']")).sendKeys("Иван Лазарь");
+        form.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+
+        form.findElement(By.cssSelector("button")).click();
+
+        String actualText = form.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub"))
+                .getText().strip();
+        String expectText = "Поле обязательно для заполнения";
+
+        assertEquals(expectText, actualText);
     }
 }
